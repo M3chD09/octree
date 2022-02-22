@@ -66,3 +66,27 @@ set_target_properties(octree PROPERTIES
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(octree)
 endif()
+
+install(
+    DIRECTORY ${PROJECT_BINARY_DIR}/Release/
+    DESTINATION /
+)
+
+add_custom_command(
+    TARGET ${PROJECT_NAME}
+    POST_BUILD
+    COMMAND windeployqt "$<TARGET_FILE:${PROJECT_NAME}>"
+        --$<LOWER_CASE:$<CONFIG>> 
+)
+
+set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION /)
+include(InstallRequiredSystemLibraries)
+
+set(CPACK_PACKAGE_INSTALL_DIRECTORY ${PROJECT_NAME})
+set(CPACK_NSIS_MENU_LINKS
+    ${PROJECT_NAME}.exe ${PROJECT_NAME}
+)
+set(CPACK_GENERATOR NSIS)
+set(CPACK_PACKAGE_VERSION_MAJOR "${octree_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${octree_VERSION_MINOR}")
+include(CPack)
